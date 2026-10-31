@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth scroll-pt-24">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HITBOX, academia de boxeo en Neiva. Entrena, mejora tu condición física y supera tus límites.">
+    <title>HITBOX | Academia de Boxeo</title>
+
+    <!-- Fuentes de Google (máximo dos): Oswald para títulos e Inter para textos -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+    <!-- Aplica el tema guardado antes de pintar la página para evitar parpadeos -->
+    <script>
+        try {
+            if (localStorage.getItem("tema") === "claro") {
+                document.documentElement.classList.remove("dark");
+            }
+        } catch (e) { /* Si el navegador bloquea localStorage se queda en oscuro */ }
+    </script>
+
+    <!-- Tailwind CSS 4 (Play CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style type="text/tailwindcss">
+        /* El modo oscuro se activa con la clase .dark en <html> y no con la preferencia del sistema */
+        @custom-variant dark (&:where(.dark, .dark *));
+
+        /*
+          Paleta propia con la regla 60-30-10:
+          60 % fondo      -> fondo (claro) / fondo-oscuro (oscuro)
+          30 % superficie -> tarjetas, navbar, secciones alternas
+          10 % acento     -> rojo HITBOX en botones, etiquetas y detalles
+          Colores semánticos: exito, error y aviso
+        */
+        @theme {
+            --color-fondo: #f5f5f4;
+            --color-fondo-oscuro: #0b0b0c;
+            --color-superficie: #ffffff;
+            --color-superficie-oscura: #18181b;
+
+            --color-acento: #b91c1c;
+            --color-acento-hover: #991b1b;
+            --color-acento-suave: #f87171;
+
+            --color-exito: #15803d;
+            --color-error: #be123c;
+            --color-error-suave: #fda4af;
+            --color-aviso: #b45309;
+            --color-aviso-suave: #fbbf24;
+
+            --font-titulo: "Oswald", "Arial Narrow", sans-serif;
+            --font-texto: "Inter", Arial, sans-serif;
+        }
+
+        @layer base {
+            /* Foco visible para navegación con teclado */
+            :focus-visible {
+                outline: 3px solid var(--color-acento);
+                outline-offset: 3px;
+            }
+            .dark :focus-visible {
+                outline-color: var(--color-acento-suave);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-fondo font-texto text-stone-900 antialiased transition-colors duration-300 dark:bg-fondo-oscuro dark:text-zinc-100">
+
+    <!-- Enlace para saltar al contenido (accesibilidad con teclado) -->
+    <a href="#contenido"
+        class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-acento focus:px-4 focus:py-2 focus:text-white">
+        Saltar al contenido
+    </a>
+
+    <!-- ===================== ENCABEZADO Y NAVEGACIÓN ===================== -->
+    <header class="sticky top-0 z-50 border-b border-stone-200 bg-superficie/95 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-superficie-oscura/95">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+            <a href="#inicio" class="font-titulo text-3xl font-bold tracking-wide text-acento dark:text-acento-suave"
+                aria-label="HITBOX, ir al inicio">HITBOX<span class="text-stone-900 dark:text-white">.</span></a>
+
+            <!-- Menú de escritorio -->
+            <nav class="hidden items-center gap-6 font-semibold md:flex lg:gap-8" aria-label="Navegación principal">
+                <a href="#inicio" class="transition hover:text-acento dark:hover:text-acento-suave">Inicio</a>
+                <a href="#nosotros" class="transition hover:text-acento dark:hover:text-acento-suave">Nosotros</a>
+                <a href="#entrenamientos" class="transition hover:text-acento dark:hover:text-acento-suave">Entrenamientos</a>
+                <a href="#horarios" class="transition hover:text-acento dark:hover:text-acento-suave">Horarios</a>
+                <a href="#contacto" class="transition hover:text-acento dark:hover:text-acento-suave">Contacto</a>
+            </nav>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Botón para cambiar entre modo claro y oscuro -->
+                <button id="temaBtn" type="button"
+                    class="rounded-lg border border-stone-300 px-3 py-2 transition hover:bg-stone-100 dark:border-zinc-600 dark:hover:bg-zinc-700"
+                    aria-label="Cambiar a modo claro">
+                    <span id="temaIcono" aria-hidden="true">☀️</span>
+                </button>
+
+                <!-- Botón hamburguesa (solo en celular) -->
+                <button id="menuBtn" type="button"
+                    class="rounded-lg px-3 py-1 text-2xl transition hover:bg-stone-100 md:hidden dark:hover:bg-zinc-700"
+                    aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="menuMovil">
+                    <span id="menuIcono" aria-hidden="true">☰</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Menú para celulares -->
+        <nav id="menuMovil" class="hidden flex-col gap-1 border-t border-stone-200 px-4 pb-4 pt-2 font-semibold md:hidden dark:border-zinc-800"
+            aria-label="Navegación para celulares">
+            <a href="#inicio" class="rounded-lg px-3 py-3 hover:bg-stone-100 dark:hover:bg-zinc-800">Inicio</a>
+            <a href="#nosotros" class="rounded-lg px-3 py-3 hover:bg-stone-100 dark:hover:bg-zinc-800">Nosotros</a>
+            <a href="#entrenamientos" class="rounded-lg px-3 py-3 hover:bg-stone-100 dark:hover:bg-zinc-800">Entrenamientos</a>
+            <a href="#horarios" class="rounded-lg px-3 py-3 hover:bg-stone-100 dark:hover:bg-zinc-800">Horarios</a>
+            <a href="#contacto" class="rounded-lg px-3 py-3 hover:bg-stone-100 dark:hover:bg-zinc-800">Contacto</a>
+        </nav>
+    </header>
+
+    <main id="contenido">
+        <!-- ===================== SECCIÓN PRINCIPAL (HERO) ===================== -->
+        <section id="inicio"
+            class="flex min-h-[80vh] items-center justify-center bg-zinc-900 bg-cover bg-center px-4 py-20 text-center text-white sm:px-6 lg:min-h-[88vh]"
+            style="background-image: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.85)), url('https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1800&q=80');">
+
+            <div class="max-w-3xl">
+                <p class="mb-5 text-sm font-bold tracking-[0.3em] text-acento-suave sm:text-base">
+                    DISCIPLINA · FUERZA · RESPETO
+                </p>
+
+                <h1 class="mb-6 font-titulo text-5xl font-bold uppercase leading-tight sm:text-6xl lg:text-7xl">
+                    Supera tus <span class="text-acento-suave">límites</span>
+                </h1>
+
+                <p class="mb-8 text-lg text-zinc-200 md:text-xl">
+                    Entrena tu cuerpo, fortalece tu mente y descubre tu potencial
+                    en HITBOX, tu academia de boxeo.
+                </p>
+
+                <div class="flex flex-col justify-center gap-4 sm:flex-row">
+                    <a href="#contacto"
+                        class="rounded-lg bg-acento px-8 py-4 font-bold text-white shadow-lg transition hover:bg-acento-hover active:scale-95">
+                        COMIENZA A ENTRENAR
+                    </a>
+                    <a href="#entrenamientos"
+                        class="rounded-lg border-2 border-white px-8 py-4 font-bold text-white transition hover:bg-white hover:text-zinc-900 active:scale-95">
+                        VER ENTRENAMIENTOS
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== NOSOTROS ===================== -->
+        <section id="nosotros" class="bg-superficie px-4 py-20 sm:px-6 dark:bg-superficie-oscura">
+            <div class="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
+                <div>
+                    <p class="mb-3 text-sm font-bold tracking-widest text-acento dark:text-acento-suave">CONÓCENOS</p>
+                    <h2 class="mb-6 font-titulo text-3xl font-bold uppercase md:text-4xl">
+                        Más que un gimnasio, una disciplina
+                    </h2>
+
+                    <p class="mb-5 text-base leading-7 text-stone-700 dark:text-zinc-300">
+                        HITBOX es una propuesta de academia de boxeo enfocada
+                        en el aprendizaje, la actividad física y el crecimiento personal.
+                    </p>
+
+                    <p class="mb-6 text-base leading-7 text-stone-700 dark:text-zinc-300">
+                        Nuestro objetivo es ofrecer un espacio donde las personas
+                        puedan desarrollar su técnica, mejorar su condición física
+                        y aprender el valor de la constancia y el respeto.
+                    </p>
+
+                    <a href="#entrenamientos"
+                        class="font-bold text-acento transition hover:text-acento-hover dark:text-acento-suave dark:hover:text-red-300">
+                        CONOCE LOS ENTRENAMIENTOS →
+                    </a>
+                </div>
+
+                <img
+                    src="https://images.unsplash.com/photo-1517438322307-e67111335449?auto=format&fit=crop&w=1000&q=80"
+                    alt="Persona entrenando con un saco de boxeo en el gimnasio"
+                    width="1000" height="667"
+                    class="h-72 w-full rounded-2xl object-cover shadow-xl sm:h-80 lg:h-96"
+                    loading="lazy">
+            </div>
+        </section>
+
+        <!-- ===================== ENTRENAMIENTOS (TARJETAS) ===================== -->
+        <section id="entrenamientos" class="px-4 py-20 sm:px-6">
+            <div class="mx-auto max-w-7xl">
+                <div class="mb-12 text-center">
+                    <p class="mb-3 text-sm font-bold tracking-widest text-acento dark:text-acento-suave">ENCUENTRA TU CAMINO</p>
+                    <h2 class="font-titulo text-3xl font-bold uppercase md:text-4xl">
+                        Nuestros entrenamientos
+                    </h2>
+                    <p class="mt-4 text-stone-700 dark:text-zinc-400">
+                        Opciones para desarrollar tus habilidades y condición física.
+                    </p>
+                </div>
+
+                <!-- 1 columna en celular, 2 en tablet y 3 en computador -->
+                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    <article class="overflow-hidden rounded-2xl bg-superficie shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-superficie-oscura">
+                        <img
+                            src="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=800&q=80"
+                            alt="Guantes de boxeo rojos colgados"
+                            width="800" height="533"
+                            class="h-52 w-full object-cover"
+                            loading="lazy">
+                        <div class="p-6">
+                            <h3 class="mb-3 font-titulo text-2xl font-bold text-acento dark:text-acento-suave">Boxeo</h3>
+                            <p class="leading-7 text-stone-700 dark:text-zinc-300">
+                                Aprende fundamentos, desplazamientos, defensa y
+                                técnica de golpeo mediante una práctica guiada.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="overflow-hidden rounded-2xl bg-superficie shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-superficie-oscura">
+                        <img
+                            src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80"
+                            alt="Zona de pesas e instalaciones de entrenamiento físico"
+                            width="800" height="533"
+                            class="h-52 w-full object-cover"
+                            loading="lazy">
+                        <div class="p-6">
+                            <h3 class="mb-3 font-titulo text-2xl font-bold text-acento dark:text-acento-suave">Preparación física</h3>
+                            <p class="leading-7 text-stone-700 dark:text-zinc-300">
+                                Desarrolla resistencia, coordinación, movilidad
+                                y fuerza con ejercicios adaptados a tu nivel.
+                            </p>
+                        </div>
+                    </article>
+
+                    <article class="overflow-hidden rounded-2xl bg-superficie shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl dark:bg-superficie-oscura">
+                        <img
+                            src="https://images.unsplash.com/photo-1583473848882-f9a5bc7fd2ee?auto=format&fit=crop&w=800&q=80"
+                            alt="Equipamiento deportivo para entrenamiento técnico"
+                            width="800" height="533"
+                            class="h-52 w-full object-cover"
+                            loading="lazy">
+                        <div class="p-6">
+                            <h3 class="mb-3 font-titulo text-2xl font-bold text-acento dark:text-acento-suave">Técnica y estrategia</h3>
+                            <p class="leading-7 text-stone-700 dark:text-zinc-300">
+                                Practica movimientos, distancia, defensa y
+                                estrategia con énfasis en la técnica y la seguridad.
+                            </p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== HORARIOS ===================== -->
+        <section id="horarios" class="bg-superficie px-4 py-20 sm:px-6 dark:bg-superficie-oscura">
+            <div class="mx-auto max-w-4xl text-center">
+                <p class="mb-3 text-sm font-bold tracking-widest text-acento dark:text-acento-suave">ORGANIZA TU TIEMPO</p>
+                <h2 class="mb-8 font-titulo text-3xl font-bold uppercase md:text-4xl">
+                    Horarios de referencia
+                </h2>
+
+                <div class="overflow-x-auto rounded-xl border border-stone-200 dark:border-zinc-700">
+                    <table class="w-full border-collapse text-left text-sm sm:text-base">
+                        <thead class="bg-acento text-white">
+                            <tr>
+                                <th scope="col" class="p-4">Día</th>
+                                <th scope="col" class="p-4">Horario</th>
+                                <th scope="col" class="p-4">Actividad</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-fondo dark:bg-zinc-800">
+                            <tr class="border-b border-stone-200 dark:border-zinc-700">
+                                <td class="p-4">Lunes a viernes</td>
+                                <td class="p-4">6:00 a. m. - 8:00 a. m.</td>
+                                <td class="p-4">Preparación física</td>
+                            </tr>
+                            <tr class="border-b border-stone-200 dark:border-zinc-700">
+                                <td class="p-4">Lunes a viernes</td>
+                                <td class="p-4">5:00 p. m. - 7:00 p. m.</td>
+                                <td class="p-4">Boxeo técnico</td>
+                            </tr>
+                            <tr>
+                                <td class="p-4">Sábados</td>
+                                <td class="p-4">8:00 a. m. - 10:00 a. m.</td>
+                                <td class="p-4">Práctica general</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="mt-4 text-sm text-stone-600 dark:text-zinc-400">
+                    Horarios ilustrativos para el proyecto académico.
+                </p>
+            </div>
+        </section>
+
+        <!-- ===================== PREGUNTAS FRECUENTES (ACORDEÓN) ===================== -->
+        <section class="px-4 py-20 sm:px-6" aria-labelledby="titulo-faq">
+            <div class="mx-auto max-w-3xl">
+                <h2 id="titulo-faq" class="mb-10 text-center font-titulo text-3xl font-bold uppercase md:text-4xl">
+                    Preguntas frecuentes
+                </h2>
+
+                <div class="space-y-4" id="acordeon">
+                    <div class="overflow-hidden rounded-xl bg-superficie shadow-sm dark:bg-superficie-oscura">
+                        <button type="button" class="pregunta flex w-full items-center justify-between gap-4 p-5 text-left font-bold transition hover:text-acento dark:hover:text-acento-suave"
+                            aria-expanded="false" aria-controls="respuesta-1">
+                            ¿Necesito experiencia para empezar?
+                            <span class="icono text-2xl transition-transform duration-300" aria-hidden="true">+</span>
+                        </button>
+                        <div id="respuesta-1" class="hidden px-5 pb-5 leading-7 text-stone-700 dark:text-zinc-300">
+                            No. La propuesta contempla el aprendizaje de fundamentos
+                            y la progresión según el nivel de cada participante.
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden rounded-xl bg-superficie shadow-sm dark:bg-superficie-oscura">
+                        <button type="button" class="pregunta flex w-full items-center justify-between gap-4 p-5 text-left font-bold transition hover:text-acento dark:hover:text-acento-suave"
+                            aria-expanded="false" aria-controls="respuesta-2">
+                            ¿Qué debo llevar al entrenamiento?
+                            <span class="icono text-2xl transition-transform duration-300" aria-hidden="true">+</span>
+                        </button>
+                        <div id="respuesta-2" class="hidden px-5 pb-5 leading-7 text-stone-700 dark:text-zinc-300">
+                            Ropa deportiva cómoda, agua y, cuando corresponda,
+                            los elementos de protección indicados por el instructor.
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden rounded-xl bg-superficie shadow-sm dark:bg-superficie-oscura">
+                        <button type="button" class="pregunta flex w-full items-center justify-between gap-4 p-5 text-left font-bold transition hover:text-acento dark:hover:text-acento-suave"
+                            aria-expanded="false" aria-controls="respuesta-3">
+                            ¿Desde qué edad se puede entrenar?
+                            <span class="icono text-2xl transition-transform duration-300" aria-hidden="true">+</span>
+                        </button>
+                        <div id="respuesta-3" class="hidden px-5 pb-5 leading-7 text-stone-700 dark:text-zinc-300">
+                            La propuesta está pensada para jóvenes desde los 14 años y
+                            adultos. Los menores de edad requieren autorización de un acudiente.
+                        </div>
+                    </div>
+
+                    <div class="overflow-hidden rounded-xl bg-superficie shadow-sm dark:bg-superficie-oscura">
+                        <button type="button" class="pregunta flex w-full items-center justify-between gap-4 p-5 text-left font-bold transition hover:text-acento dark:hover:text-acento-suave"
+                            aria-expanded="false" aria-controls="respuesta-4">
+                            ¿Cómo puedo solicitar información?
+                            <span class="icono text-2xl transition-transform duration-300" aria-hidden="true">+</span>
+                        </button>
+                        <div id="respuesta-4" class="hidden px-5 pb-5 leading-7 text-stone-700 dark:text-zinc-300">
+                            Puedes completar el formulario de contacto de esta página.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== CONTACTO (FORMULARIO) ===================== -->
+        <section id="contacto" class="bg-superficie px-4 py-20 sm:px-6 dark:bg-superficie-oscura">
+            <div class="mx-auto max-w-2xl">
+                <div class="mb-10 text-center">
+                    <p class="mb-3 text-sm font-bold tracking-widest text-acento dark:text-acento-suave">DA EL PRIMER PASO</p>
+                    <h2 class="font-titulo text-3xl font-bold uppercase md:text-4xl">Contáctanos</h2>
+                    <p class="mt-4 text-stone-700 dark:text-zinc-300">
+                        Completa el formulario para solicitar información.
+                        Los campos marcados con <span class="text-error dark:text-error-suave" aria-hidden="true">*</span> son obligatorios.
+                    </p>
+                </div>
+
+                <form id="formulario" class="space-y-5" novalidate>
+                    <div>
+                        <label for="nombre" class="mb-2 block font-bold">Nombre completo <span class="text-error dark:text-error-suave" aria-hidden="true">*</span></label>
+                        <input id="nombre" name="nombre" type="text" autocomplete="name" required
+                            aria-describedby="error-nombre"
+                            class="w-full rounded-lg border border-stone-300 bg-white p-3 text-stone-900 placeholder:text-stone-500 aria-invalid:border-2 aria-invalid:border-error dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-400 dark:aria-invalid:border-error-suave"
+                            placeholder="Escribe tu nombre">
+                        <p id="error-nombre" class="mt-1 min-h-5 text-sm font-semibold text-error dark:text-error-suave"></p>
+                    </div>
+
+                    <div>
+                        <label for="correo" class="mb-2 block font-bold">Correo electrónico <span class="text-error dark:text-error-suave" aria-hidden="true">*</span></label>
+                        <input id="correo" name="correo" type="email" autocomplete="email" required
+                            aria-describedby="error-correo"
+                            class="w-full rounded-lg border border-stone-300 bg-white p-3 text-stone-900 placeholder:text-stone-500 aria-invalid:border-2 aria-invalid:border-error dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-400 dark:aria-invalid:border-error-suave"
+                            placeholder="ejemplo@correo.com">
+                        <p id="error-correo" class="mt-1 min-h-5 text-sm font-semibold text-error dark:text-error-suave"></p>
+                    </div>
+
+                    <div>
+                        <label for="actividad" class="mb-2 block font-bold">Entrenamiento de interés <span class="text-error dark:text-error-suave" aria-hidden="true">*</span></label>
+                        <select id="actividad" name="actividad" required
+                            aria-describedby="error-actividad"
+                            class="w-full rounded-lg border border-stone-300 bg-white p-3 text-stone-900 aria-invalid:border-2 aria-invalid:border-error dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:aria-invalid:border-error-suave">
+                            <option value="">Selecciona una opción</option>
+                            <option>Boxeo</option>
+                            <option>Preparación física</option>
+                            <option>Técnica y estrategia</option>
+                            <option>Quiero más información</option>
+                        </select>
+                        <p id="error-actividad" class="mt-1 min-h-5 text-sm font-semibold text-error dark:text-error-suave"></p>
+                    </div>
+
+                    <div>
+                        <label for="mensaje" class="mb-2 block font-bold">Mensaje <span class="text-error dark:text-error-suave" aria-hidden="true">*</span></label>
+                        <textarea id="mensaje" name="mensaje" rows="4" required
+                            aria-describedby="error-mensaje"
+                            class="w-full rounded-lg border border-stone-300 bg-white p-3 text-stone-900 placeholder:text-stone-500 aria-invalid:border-2 aria-invalid:border-error dark:border-zinc-600 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-400 dark:aria-invalid:border-error-suave"
+                            placeholder="Cuéntanos qué información necesitas"></textarea>
+                        <p id="error-mensaje" class="mt-1 min-h-5 text-sm font-semibold text-error dark:text-error-suave"></p>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full rounded-lg bg-acento px-6 py-4 font-bold text-white transition hover:bg-acento-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60">
+                        ENVIAR SOLICITUD
+                    </button>
+
+                    <p class="flex items-start gap-2 rounded-lg border-l-4 border-aviso bg-amber-50 p-3 text-sm text-stone-800 dark:border-aviso-suave dark:bg-zinc-800 dark:text-zinc-300">
+                        <span aria-hidden="true">⚠️</span>
+                        Formulario demostrativo: los datos no se envían a un servidor.
+                    </p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===================== TOAST DE CONFIRMACIÓN ===================== -->
+    <div id="toast" role="status" aria-live="polite"
+        class="pointer-events-none fixed bottom-5 left-4 right-4 z-50 flex translate-y-6 items-center gap-3 rounded-xl bg-exito px-5 py-4 font-semibold text-white opacity-0 shadow-2xl transition duration-300 sm:left-auto sm:right-6 sm:max-w-sm">
+        <span aria-hidden="true" class="text-xl">✔</span>
+        <span id="toastTexto"></span>
+    </div>
+
+    <!-- ===================== PIE DE PÁGINA ===================== -->
+    <footer class="bg-stone-200 px-4 py-12 text-stone-700 sm:px-6 dark:bg-black dark:text-zinc-400">
+        <div class="mx-auto grid max-w-6xl gap-8 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-4">
+            <div>
+                <a href="#inicio" class="font-titulo text-3xl font-bold text-acento dark:text-acento-suave">
+                    HITBOX<span class="text-stone-900 dark:text-white">.</span>
+                </a>
+                <p class="mt-3">Disciplina, fuerza y respeto.</p>
+            </div>
+
+            <div>
+                <h2 class="mb-3 font-titulo text-lg font-bold uppercase text-stone-900 dark:text-white">Ubicación</h2>
+                <p>Neiva, Huila, Colombia</p>
+                <p class="text-sm">Dirección de referencia para el proyecto</p>
+            </div>
+
+            <div>
+                <h2 class="mb-3 font-titulo text-lg font-bold uppercase text-stone-900 dark:text-white">Horario</h2>
+                <p>Lun - Vie: 6:00 a. m. - 8:00 p. m.</p>
+                <p>Sábados: 8:00 a. m. - 12:00 m.</p>
+            </div>
+
+            <div>
+                <h2 class="mb-3 font-titulo text-lg font-bold uppercase text-stone-900 dark:text-white">Síguenos</h2>
+                <ul class="space-y-1">
+                    <li><a href="https://www.instagram.com/" target="_blank" rel="noopener" class="hover:text-acento dark:hover:text-acento-suave">Instagram</a></li>
+                    <li><a href="https://www.facebook.com/" target="_blank" rel="noopener" class="hover:text-acento dark:hover:text-acento-suave">Facebook</a></li>
+                    <li><a href="https://www.tiktok.com/" target="_blank" rel="noopener" class="hover:text-acento dark:hover:text-acento-suave">TikTok</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <p class="mt-10 border-t border-stone-300 pt-6 text-center text-sm dark:border-zinc-800">
+            © 2026 HITBOX. Todos los derechos reservados. Proyecto académico.
+        </p>
+    </footer>
+
+    <!-- ===================== JAVASCRIPT ===================== -->
+    <script>
+        // ---------- Menú hamburguesa ----------
+        const menuBtn = document.getElementById("menuBtn");
+        const menuIcono = document.getElementById("menuIcono");
+        const menuMovil = document.getElementById("menuMovil");
+
+        function cambiarMenu(abrir) {
+            menuMovil.classList.toggle("hidden", !abrir);
+            menuMovil.classList.toggle("flex", abrir);
+            menuBtn.setAttribute("aria-expanded", String(abrir));
+            menuBtn.setAttribute("aria-label", abrir ? "Cerrar menú de navegación" : "Abrir menú de navegación");
+            menuIcono.textContent = abrir ? "✕" : "☰";
+        }
+
+        menuBtn.addEventListener("click", () => {
+            cambiarMenu(menuMovil.classList.contains("hidden"));
+        });
+
+        // Cerrar el menú al elegir una sección o al presionar Escape
+        menuMovil.querySelectorAll("a").forEach(enlace => {
+            enlace.addEventListener("click", () => cambiarMenu(false));
+        });
+
+        document.addEventListener("keydown", evento => {
+            if (evento.key === "Escape" && !menuMovil.classList.contains("hidden")) {
+                cambiarMenu(false);
+                menuBtn.focus();
+            }
+        });
+
+        // ---------- Modo oscuro / claro ----------
+        const temaBtn = document.getElementById("temaBtn");
+        const temaIcono = document.getElementById("temaIcono");
+        const raiz = document.documentElement;
+
+        function actualizarBotonTema() {
+            const oscuro = raiz.classList.contains("dark");
+            temaIcono.textContent = oscuro ? "☀️" : "🌙";
+            temaBtn.setAttribute("aria-label", oscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro");
+        }
+
+        temaBtn.addEventListener("click", () => {
+            raiz.classList.toggle("dark");
+            try {
+                localStorage.setItem("tema", raiz.classList.contains("dark") ? "oscuro" : "claro");
+            } catch (e) { /* Si no se puede guardar, el cambio solo dura esta visita */ }
+            actualizarBotonTema();
+        });
+
+        actualizarBotonTema();
+
+        // ---------- Acordeón de preguntas frecuentes ----------
+        const preguntas = document.querySelectorAll(".pregunta");
+
+        preguntas.forEach(pregunta => {
+            pregunta.addEventListener("click", () => {
+                const abierta = pregunta.getAttribute("aria-expanded") === "true";
+
+                // Cierra todas para que solo quede una abierta
+                preguntas.forEach(otra => {
+                    otra.setAttribute("aria-expanded", "false");
+                    document.getElementById(otra.getAttribute("aria-controls")).classList.add("hidden");
+                    otra.querySelector(".icono").classList.remove("rotate-45");
+                });
+
+                if (!abierta) {
+                    pregunta.setAttribute("aria-expanded", "true");
+                    document.getElementById(pregunta.getAttribute("aria-controls")).classList.remove("hidden");
+                    pregunta.querySelector(".icono").classList.add("rotate-45");
+                }
+            });
+        });
+
+        // ---------- Validación del formulario ----------
+        const formulario = document.getElementById("formulario");
+        const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+        // Cada regla devuelve el mensaje de error o una cadena vacía si el campo es válido
+        const reglas = {
+            nombre: valor => {
+                if (valor === "") return "El nombre es obligatorio.";
+                if (valor.length < 3) return "El nombre debe tener al menos 3 caracteres.";
+                return "";
+            },
+            correo: valor => {
+                if (valor === "") return "El correo es obligatorio.";
+                if (!regexCorreo.test(valor)) return "Escribe un correo válido, por ejemplo nombre@correo.com.";
+                return "";
+            },
+            actividad: valor => valor === "" ? "Selecciona un entrenamiento." : "",
+            mensaje: valor => {
+                if (valor === "") return "El mensaje es obligatorio.";
+                if (valor.length < 10) return "El mensaje debe tener al menos 10 caracteres.";
+                return "";
+            }
+        };
+
+        function validarCampo(id) {
+            const campo = document.getElementById(id);
+            const error = reglas[id](campo.value.trim());
+
+            document.getElementById("error-" + id).textContent = error;
+            campo.setAttribute("aria-invalid", error ? "true" : "false");
+            return error === "";
+        }
+
+        // Después del primer intento, el error se actualiza mientras la persona escribe
+        let intentoEnvio = false;
+        Object.keys(reglas).forEach(id => {
+            const campo = document.getElementById(id);
+            campo.addEventListener("input", () => { if (intentoEnvio) validarCampo(id); });
+            campo.addEventListener("blur", () => { if (campo.value.trim() !== "") validarCampo(id); });
+        });
+
+        formulario.addEventListener("submit", evento => {
+            evento.preventDefault();
+            intentoEnvio = true;
+
+            const ids = Object.keys(reglas);
+            const resultados = ids.map(validarCampo);
+
+            if (resultados.includes(false)) {
+                // Lleva el foco al primer campo con error
+                document.getElementById(ids[resultados.indexOf(false)]).focus();
+                return;
+            }
+
+            const nombre = document.getElementById("nombre").value.trim().split(" ")[0];
+            mostrarToast("¡Gracias, " + nombre + "! Recibimos tu solicitud.");
+
+            formulario.reset();
+            intentoEnvio = false;
+            ids.forEach(id => document.getElementById(id).removeAttribute("aria-invalid"));
+        });
+
+        // ---------- Toast de confirmación (desaparece a los 4 segundos) ----------
+        const toast = document.getElementById("toast");
+        const toastTexto = document.getElementById("toastTexto");
+        let temporizadorToast;
+
+        function mostrarToast(texto) {
+            toastTexto.textContent = texto;
+            toast.classList.remove("opacity-0", "translate-y-6");
+            toast.classList.add("opacity-100", "translate-y-0");
+
+            clearTimeout(temporizadorToast);
+            temporizadorToast = setTimeout(() => {
+                toast.classList.add("opacity-0", "translate-y-6");
+                toast.classList.remove("opacity-100", "translate-y-0");
+            }, 4000);
+        }
+    </script>
+
+</body>
+</html>
